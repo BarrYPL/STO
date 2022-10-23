@@ -23,17 +23,14 @@ int main()
     DWORD dNoOfBytesWritten = 0;
     DWORD dwRes;
     OVERLAPPED osWrite = {0};
-    SYSTEMTIME lt = {0};
 
-    GetLocalTime(&lt);
-
-    hComm = CreateFile(comPortName,                //port name
+    hComm = CreateFile(comPortName,                  //port name
                        GENERIC_READ | GENERIC_WRITE, //Read/Write
                        0,                            // No Sharing
                        NULL,                         // No Security
-                       OPEN_EXISTING,// Open existing port only
-                       0,            // Non Overlapped I/O
-                       NULL);        // Null for Comm Devices
+                       OPEN_EXISTING,                // Open existing port only
+                       0,                            // Non Overlapped I/O
+                       NULL);                        // Null for Comm Devices
 
     if (hComm == INVALID_HANDLE_VALUE)
     {
@@ -66,7 +63,7 @@ int main()
     }
 
     //DCB Structure Settings
-    dcbSerialParams.BaudRate = CBR_115200;      // Setting BaudRate = 115200
+    dcbSerialParams.BaudRate = CBR_115200;    // Setting BaudRate = 115200
     dcbSerialParams.ByteSize = 8;             // Setting ByteSize = 8
     dcbSerialParams.StopBits = ONESTOPBIT;    // Setting StopBits = 1
     dcbSerialParams.Parity = NOPARITY;        // Setting Parity = None
@@ -116,31 +113,6 @@ int main()
     {
         printf("Setting CommMask successfull. \n");
     }
-
-
-    /////////////////////////////////////////////////////////
-    char timeStamp[10];
-    int n;
-    sprintf(timeStamp, "%02d:%02d:%02d\r", lt.wHour, lt.wMinute, lt.wSecond);
-    printf(timeStamp);
-    dNoOFBytestoWrite = sizeof(timeStamp);
-    PurgeComm(hComm, PURGE_RXCLEAR);
-    for(n = 0; n < dNoOFBytestoWrite; n++){
-        status = WriteFile(hComm, &timeStamp[n], 1, &dNoOfBytesWritten, NULL);
-        if (status == FALSE) {
-         break;
-      }
-      Sleep(1);
-    }
-    if (status == FALSE)
-    {
-        strcpy(ErrorString, "Error: Sending data failed !");
-        ErrPtr = &ErrorString;
-        CreateErrorA(ErrPtr);
-        CloseHandle(hComm);
-        return -1;
-    }
-    /////////////////////////////////////////////////////////
     printf("Waiting for Data Reception... \n");
 
     status = WaitCommEvent(hComm, &dwEventMask, NULL);
@@ -174,7 +146,7 @@ int main()
                     if (SerialBuffer[j] == 49)
                     {
                         //printf("%c \n", SerialBuffer[j]);
-                        //Pulpit to the right shortcut
+                        //Pulpit to the right shortcut WIN+LCTRL+RIGHT
                     ///////////////////////////////////////////////////
                         INPUT inputs[6] = {};
                         ZeroMemory(inputs, sizeof(inputs));
@@ -203,7 +175,7 @@ int main()
                         UINT uSent = SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
                     ///////////////////////////////////////////////////
                     }
-                    //Pulpit to the left shortcut
+                    //Pulpit to the left shortcut WIN+LCTRL+LEFT
                     if (SerialBuffer[j] == 50)
                     {
                         INPUT inputs[6] = {};
